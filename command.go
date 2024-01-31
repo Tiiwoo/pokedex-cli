@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-func callbackHelp() {
+func callbackHelp() error {
 	helpInfo := `Welcome to the Pokedex help menu!
 Here are your available commands:`
 	fmt.Println(helpInfo)
@@ -16,8 +16,10 @@ Here are your available commands:`
 		fmt.Printf(" - %s: %s\n", cmd.name, cmd.description)
 	}
 	fmt.Println("")
+	return nil
 }
 
-func callbackExit() {
+func callbackExit() error {
 	os.Exit(0)
+	return nil
 }
