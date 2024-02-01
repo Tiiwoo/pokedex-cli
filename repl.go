@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func startRepl() {
+func startRepl(cfg *config) {
 	scanner := bufio.NewScanner(os.Stdin)
 
 	for {
@@ -21,6 +21,10 @@ func startRepl() {
 			continue
 		}
 		commandName := cleaned[0]
+		args := []string{}
+		if len(cleaned) > 1 {
+			args = cleaned[1:]
+		}
 
 		availableCommands := getCommands()
 
@@ -29,14 +33,17 @@ func startRepl() {
 			fmt.Println("invalid command")
 			continue
 		}
-		command.callback()
+		err := command.callback(cfg, args...)
+		if err != nil {
+			fmt.Println(err)
+		}
 	}
 }
 
 type cliCommand struct {
 	name        string
 	description string
-	callback    func() error
+	callback    func(*config, ...string) error
 }
 
 func getCommands() map[string]cliCommand {
@@ -50,6 +57,36 @@ func getCommands() map[string]cliCommand {
 			name:        "exit",
 			description: "Turns off the Pokedex",
 			callback:    callbackExit,
+		},
+		"map": {
+			name:        "map",
+			description: "Lists the next page of location areas",
+			callback:    callbackMap,
+		},
+		"mapb": {
+			name:        "mapb",
+			description: "Lists the previous page of location areas",
+			callback:    callbackMapb,
+		},
+		"explore": {
+			name:        "explore {location_area}",
+			description: "Lists the pokeman in a location area",
+			callback:    callbackExplore,
+		},
+		"catch": {
+			name:        "catch {pokemon_name}",
+			description: "Attempt to catch a pokemon and add it to your pokedex",
+			callback:    callbackCatch,
+		},
+		"inspect": {
+			name:        "inspect {pokemon_name}",
+			description: "View information about a caught pokemon",
+			callback:    callbackInspect,
+		},
+		"pokedex": {
+			name:        "pokedex",
+			description: "View all the pokemon in your pokedex",
+			callback:    callbackPokedex,
 		},
 	}
 }

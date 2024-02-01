@@ -1,20 +1,23 @@
 package main
 
 import (
-	"fmt"
-	"log"
+	"time"
 
 	"github.com/Tiiwoo/pokedex-cli/internal/pokeapi"
 )
 
+type config struct {
+	pokeapiClient       pokeapi.Client
+	nextLocationAreaURL *string
+	prevLocationAreaURL *string
+	caughtPokemon       map[string]pokeapi.Pokemon
+}
+
 func main() {
-	pokeapiClient := pokeapi.NewClient()
-
-	resp, err := pokeapiClient.ListLocationAreas()
-	if err != nil {
-		log.Fatal(err)
+	cfg := config{
+		pokeapiClient: pokeapi.NewClient(time.Hour),
+		caughtPokemon: make(map[string]pokeapi.Pokemon),
 	}
-	fmt.Println(resp)
 
-	// startRepl()
+	startRepl(&cfg)
 }
